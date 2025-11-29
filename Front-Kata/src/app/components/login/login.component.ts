@@ -63,12 +63,13 @@ export class LoginComponent {
     this.submitted = true;
     if (this.form.invalid) return;
     const { username, password } = this.form.getRawValue();
-    const ok = this.auth.login(username ?? '', password ?? '');
-    if (!ok) {
-      this.error = 'Credenciales inválidas';
-      return;
-    }
-    this.error = '';
-    this.router.navigateByUrl('/dashboard');
+    this.auth.login(username ?? '', password ?? '').subscribe(ok => {
+      if (!ok) {
+        this.error = 'Credenciales inválidas';
+        return;
+      }
+      this.error = '';
+      this.router.navigateByUrl('/dashboard');
+    });
   }
 }

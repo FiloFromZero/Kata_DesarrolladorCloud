@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { NgClass, NgIf } from '@angular/common';
+import { RequestsService, UIRequest } from '../../services/requests.service';
 
 @Component({
   selector: 'app-approval-detail',
@@ -52,42 +53,30 @@ export class ApprovalDetailComponent {
     approved: 'bg-emerald-100 text-emerald-800 ring-emerald-200',
     rejected: 'bg-rose-100 text-rose-800 ring-rose-200'
   };
-  readonly typeStyles: Record<'Despliegue' | 'Acceso' | 'Cambio', string> = {
+  readonly typeStyles: Record<string, string> = {
     Despliegue: 'bg-[#e3efff] text-[#0b4dbb] ring-[#c9dbff]',
     Acceso: 'bg-cyan-100 text-cyan-700 ring-cyan-200',
     Cambio: 'bg-fuchsia-100 text-fuchsia-700 ring-fuchsia-200'
   };
 
-  readonly requests: Array<{
-    id: string;
-    title: string;
-    description: string;
-    requester: { name: string; avatar: string };
-    type: 'Despliegue' | 'Acceso' | 'Cambio';
-    date: string;
-    status: 'pending' | 'approved' | 'rejected';
-  }> = [
-    { id: '7F3A9', title: 'Despliegue v1.2.3', description: 'Despliegue de la versión v1.2.3 del servicio de pagos en producción.', requester: { name: 'María López', avatar: 'https://i.pravatar.cc/48?img=5' }, type: 'Despliegue', date: '2025-11-20', status: 'pending' },
-    { id: '9B2C1', title: 'Acceso a S3 bucket', description: 'Solicitud de acceso de solo lectura al bucket S3 para auditoría.', requester: { name: 'Carlos Ruiz', avatar: 'https://i.pravatar.cc/48?img=12' }, type: 'Acceso', date: '2025-11-19', status: 'approved' },
-    { id: '2D8E7', title: 'Cambio variable entorno', description: 'Modificar la variable FEATURE_X_ENABLED para habilitar nueva funcionalidad.', requester: { name: 'Ana Pérez', avatar: 'https://i.pravatar.cc/48?img=22' }, type: 'Cambio', date: '2025-11-18', status: 'rejected' }
-  ];
-
-  request: {
-    id: string;
-    title: string;
-    description: string;
-    requester: { name: string; avatar: string };
-    type: 'Despliegue' | 'Acceso' | 'Cambio';
-    date: string;
-    status: 'pending' | 'approved' | 'rejected';
-  };
+  readonly service = inject(RequestsService);
+  request!: UIRequest & { description?: string };
   comment = '';
 
   constructor(route: ActivatedRoute) {
     const id = route.snapshot.paramMap.get('id') ?? '';
-    this.request = this.requests.find(r => r.id === id) ?? this.requests[0];
+    this.service.getAll().subscribe(list => {
+      const found = list.find(r => r.id === id) ?? list[0];
+      this.request = found as (UIRequest & { description?: string });
+    });
   }
 
-  setStatus(s: 'pending' | 'approved' | 'rejected') { this.request = { ...this.request, status: s }; }
+  setStatus(s: 'pending' | 'approved' | 'rejected') {
+    if (!this.request?.id) return;
+    if (s === 'pending') { this.request = { ...this.request, status: s }; return; }
+    this.service.updateStatus(this.request.id, s, this.comment).subscribe(() => {
+      this.request = { ...this.request, status: s };
+    });
+  }
   statusLabel(s: 'pending' | 'approved' | 'rejected') { return s === 'pending' ? 'Pendiente' : s === 'approved' ? 'Aprobado' : 'Rechazado'; }
 }

@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { NgClass } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { RequestsService, UIRequest } from '../../services/requests.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -89,21 +90,12 @@ import { RouterLink } from '@angular/router';
   `
 })
 export class DashboardComponent {
-  readonly requests: Array<{
-    id: string;
-    title: string;
-    requester: { name: string; avatar: string };
-    type: 'Despliegue' | 'Acceso' | 'Cambio';
-    date: string;
-    status: 'pending' | 'approved' | 'rejected';
-  }> = [
-    { id: '7F3A9', title: 'Despliegue v1.2.3', requester: { name: 'María López', avatar: 'https://i.pravatar.cc/48?img=5' }, type: 'Despliegue', date: '2025-11-20', status: 'pending' },
-    { id: '9B2C1', title: 'Acceso a S3 bucket', requester: { name: 'Carlos Ruiz', avatar: 'https://i.pravatar.cc/48?img=12' }, type: 'Acceso', date: '2025-11-19', status: 'approved' },
-    { id: '2D8E7', title: 'Cambio variable entorno', requester: { name: 'Ana Pérez', avatar: 'https://i.pravatar.cc/48?img=22' }, type: 'Cambio', date: '2025-11-18', status: 'rejected' },
-    { id: '6C1B4', title: 'Despliegue hotfix', requester: { name: 'Luis García', avatar: 'https://i.pravatar.cc/48?img=28' }, type: 'Despliegue', date: '2025-11-18', status: 'pending' },
-    { id: '5A7D3', title: 'Acceso VPN corporativa', requester: { name: 'Jorge Díaz', avatar: 'https://i.pravatar.cc/48?img=36' }, type: 'Acceso', date: '2025-11-17', status: 'approved' },
-    { id: '3E9H0', title: 'Cambio límite CPU', requester: { name: 'Sofía Gómez', avatar: 'https://i.pravatar.cc/48?img=44' }, type: 'Cambio', date: '2025-11-16', status: 'pending' }
-  ];
+  readonly service = inject(RequestsService);
+  requests: UIRequest[] = [];
+
+  constructor() {
+    this.service.getAll().subscribe(data => this.requests = data);
+  }
 
   readonly stateStyles: Record<'pending' | 'approved' | 'rejected', string> = {
     pending: 'bg-yellow-100 text-yellow-800 ring-yellow-200',
@@ -111,7 +103,7 @@ export class DashboardComponent {
     rejected: 'bg-rose-100 text-rose-800 ring-rose-200'
   };
 
-  readonly typeStyles: Record<'Despliegue' | 'Acceso' | 'Cambio', string> = {
+  readonly typeStyles: Record<string, string> = {
     Despliegue: 'bg-[#e3efff] text-[#0b4dbb] ring-[#c9dbff]',
     Acceso: 'bg-cyan-100 text-cyan-700 ring-cyan-200',
     Cambio: 'bg-fuchsia-100 text-fuchsia-700 ring-fuchsia-200'

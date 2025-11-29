@@ -2,6 +2,7 @@ package com.coedesarrollo.backKata.service;
 
 import com.coedesarrollo.backKata.dto.RequestRecord;
 import com.coedesarrollo.backKata.dto.RequestUpdateRecord;
+import com.coedesarrollo.backKata.exception.ResourceNotFoundException; // <--- Importar
 import com.coedesarrollo.backKata.model.RequestEntity;
 import com.coedesarrollo.backKata.model.RequestStatus;
 import com.coedesarrollo.backKata.repository.RequestRepository;
@@ -17,12 +18,10 @@ public class RequestService {
 
     private final RequestRepository repository;
 
-    // Obtener todas
     public List<RequestEntity> getAll() {
         return repository.findAll();
     }
 
-    // Crear solicitud
     public RequestEntity create(RequestRecord dto) {
         RequestEntity entity = RequestEntity.builder()
                 .title(dto.title())
@@ -30,18 +29,17 @@ public class RequestService {
                 .requesterName(dto.requesterName())
                 .approverName(dto.approverName())
                 .type(dto.type())
-                .status(RequestStatus.PENDING) // Siempre inicia Pendiente
+                .status(RequestStatus.PENDING)
                 .build();
         return repository.save(entity);
     }
 
-    // Actualizar estado (Aprobar/Rechazar)
     public RequestEntity updateStatus(UUID id, RequestUpdateRecord dto) {
+        // AQUÍ ESTÁ EL CAMBIO 👇
         RequestEntity request = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Solicitud no encontrada"));
+                .orElseThrow(() -> new ResourceNotFoundException("No se encontró la solicitud con ID: " + id));
 
         request.setStatus(dto.status());
-        // Solo actualizamos comentario si viene algo escrito
         if (dto.comments() != null && !dto.comments().isBlank()) {
             request.setComments(dto.comments());
         }
