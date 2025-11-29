@@ -16,6 +16,7 @@ build/
 bin/
 !**/src/main/**/bin/
 !**/src/test/**/bin/
+docker-compose.yml
 
 ### IntelliJ IDEA ###
 .idea
