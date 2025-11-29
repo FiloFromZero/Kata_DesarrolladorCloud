@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-dashboard-layout',
@@ -42,6 +43,10 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
                 <div class="text-xs text-slate-500">Product Owner</div>
               </div>
             </div>
+            <button (click)="logout()" class="inline-flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium bg-white text-slate-700 ring-1 ring-gray-300 hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0b4dbb] focus-visible:ring-offset-2">
+              Cerrar sesión
+              <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M10 17 15 12 10 7V10H3v4h7v3Z M19 3h-6v2h6v14h-6v2h6a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2Z"/></svg>
+            </button>
           </div>
         </header>
         <main class="flex-1 p-6">
@@ -51,5 +56,8 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
     </div>
   `
 })
-export class DashboardLayoutComponent {}
+export class DashboardLayoutComponent {
+  constructor(private readonly auth: AuthService) {}
+  logout() { this.auth.logout(); }
+}
 

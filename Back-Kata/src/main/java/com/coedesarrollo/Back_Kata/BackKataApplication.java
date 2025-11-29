@@ -6,8 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class BackKataApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(BackKataApplication.class, args);
-	}
-
+    public static void main(String[] args) {
+        SpringApplication.run(BackKataApplication.class, args);
+    }
 }
