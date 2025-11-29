@@ -1,9 +1,9 @@
-package com.coedesarrollo.Back_Kata.controller;
+package com.coedesarrollo.backKata.controller;
 
-import com.coedesarrollo.Back_Kata.dto.RequestRecord;
-import com.coedesarrollo.Back_Kata.dto.RequestUpdateRecord;
-import com.coedesarrollo.Back_Kata.model.RequestEntity;
-import com.coedesarrollo.Back_Kata.service.RequestService;
+import com.coedesarrollo.backKata.dto.RequestRecord;
+import com.coedesarrollo.backKata.dto.RequestUpdateRecord;
+import com.coedesarrollo.backKata.model.RequestEntity;
+import com.coedesarrollo.backKata.service.RequestService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

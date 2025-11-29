@@ -1,6 +1,6 @@
-package com.coedesarrollo.Back_Kata.repository;
+package com.coedesarrollo.backKata.repository;
 
-import com.coedesarrollo.Back_Kata.model.RequestEntity;
+import com.coedesarrollo.backKata.model.RequestEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.UUID;
 

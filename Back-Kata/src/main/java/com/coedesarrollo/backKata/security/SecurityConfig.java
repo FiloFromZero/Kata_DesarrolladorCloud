@@ -1,4 +1,4 @@
-package com.coedesarrollo.Back_Kata.security;
+package com.coedesarrollo.backKata.security;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

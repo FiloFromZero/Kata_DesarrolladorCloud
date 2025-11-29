@@ -1,4 +1,4 @@
-package com.coedesarrollo.Back_Kata.security;
+package com.coedesarrollo.backKata.security;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

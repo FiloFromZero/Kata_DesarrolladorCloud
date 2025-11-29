@@ -1,11 +1,11 @@
-package com.coedesarrollo.Back_Kata.service;
+package com.coedesarrollo.backKata.service;
 
-import com.coedesarrollo.Back_Kata.dto.AuthenticationRequest;
-import com.coedesarrollo.Back_Kata.dto.AuthenticationResponse;
-import com.coedesarrollo.Back_Kata.dto.RegisterRequest;
-import com.coedesarrollo.Back_Kata.model.UserEntity;
-import com.coedesarrollo.Back_Kata.repository.UserRepository;
-import com.coedesarrollo.Back_Kata.security.JwtService;
+import com.coedesarrollo.backKata.dto.AuthenticationRequest;
+import com.coedesarrollo.backKata.dto.AuthenticationResponse;
+import com.coedesarrollo.backKata.dto.RegisterRequest;
+import com.coedesarrollo.backKata.model.UserEntity;
+import com.coedesarrollo.backKata.repository.UserRepository;
+import com.coedesarrollo.backKata.security.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

@@ -1,4 +1,4 @@
-package com.coedesarrollo.Back_Kata.dto;
+package com.coedesarrollo.backKata.dto;
 
 import jakarta.validation.constraints.NotBlank;
 

@@ -1,3 +1,3 @@
-package com.coedesarrollo.Back_Kata.dto;
+package com.coedesarrollo.backKata.dto;
 
 public record RegisterRequest(String username, String password, String role) {}

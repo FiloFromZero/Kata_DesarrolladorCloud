@@ -1,9 +1,9 @@
-package com.coedesarrollo.Back_Kata.controller;
+package com.coedesarrollo.backKata.controller;
 
-import com.coedesarrollo.Back_Kata.dto.AuthenticationRequest;
-import com.coedesarrollo.Back_Kata.dto.AuthenticationResponse;
-import com.coedesarrollo.Back_Kata.dto.RegisterRequest;
-import com.coedesarrollo.Back_Kata.service.AuthenticationService;
+import com.coedesarrollo.backKata.dto.AuthenticationRequest;
+import com.coedesarrollo.backKata.dto.AuthenticationResponse;
+import com.coedesarrollo.backKata.dto.RegisterRequest;
+import com.coedesarrollo.backKata.service.AuthenticationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;

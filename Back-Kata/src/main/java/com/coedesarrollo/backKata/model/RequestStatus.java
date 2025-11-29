@@ -1,4 +1,4 @@
-package com.coedesarrollo.Back_Kata.model;
+package com.coedesarrollo.backKata.model;
 
 
 public enum RequestStatus {

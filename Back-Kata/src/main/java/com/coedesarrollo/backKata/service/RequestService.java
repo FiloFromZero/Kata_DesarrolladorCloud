@@ -1,10 +1,10 @@
-package com.coedesarrollo.Back_Kata.service;
+package com.coedesarrollo.backKata.service;
 
-import com.coedesarrollo.Back_Kata.dto.RequestRecord;
-import com.coedesarrollo.Back_Kata.dto.RequestUpdateRecord;
-import com.coedesarrollo.Back_Kata.model.RequestEntity;
-import com.coedesarrollo.Back_Kata.model.RequestStatus;
-import com.coedesarrollo.Back_Kata.repository.RequestRepository;
+import com.coedesarrollo.backKata.dto.RequestRecord;
+import com.coedesarrollo.backKata.dto.RequestUpdateRecord;
+import com.coedesarrollo.backKata.model.RequestEntity;
+import com.coedesarrollo.backKata.model.RequestStatus;
+import com.coedesarrollo.backKata.repository.RequestRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

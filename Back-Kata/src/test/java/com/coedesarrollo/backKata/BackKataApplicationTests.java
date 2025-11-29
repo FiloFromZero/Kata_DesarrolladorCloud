@@ -1,4 +1,4 @@
-package com.coedesarrollo.Back_Kata;
+package com.coedesarrollo.backKata;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

@@ -1,6 +1,6 @@
-package com.coedesarrollo.Back_Kata.config;
+package com.coedesarrollo.backKata.config;
 
-import com.coedesarrollo.Back_Kata.repository.UserRepository;
+import com.coedesarrollo.backKata.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
