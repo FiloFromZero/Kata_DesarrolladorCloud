@@ -4,6 +4,8 @@ import com.coedesarrollo.backKata.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -17,8 +19,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class ApplicationConfig {
 
     private final UserRepository userRepository;
+    @Value("${security.bcrypt.strength:10}")
+    private int bcryptStrength;
 
     @Bean
+    @Transactional(readOnly = true)
     public UserDetailsService userDetailsService() {
         return username -> userRepository.findByUsername(username)
                 .map(user -> org.springframework.security.core.userdetails.User.builder()
@@ -46,6 +51,6 @@ public class ApplicationConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+        return new BCryptPasswordEncoder(bcryptStrength);
     }
 }

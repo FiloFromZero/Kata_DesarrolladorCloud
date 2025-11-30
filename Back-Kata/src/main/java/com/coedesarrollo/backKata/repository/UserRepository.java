@@ -8,4 +8,5 @@ import java.util.UUID;
 public interface UserRepository extends JpaRepository<UserEntity, UUID> {
     // Método mágico para buscar por nombre de usuario
     Optional<UserEntity> findByUsername(String username);
+    boolean existsByUsername(String username);
 }

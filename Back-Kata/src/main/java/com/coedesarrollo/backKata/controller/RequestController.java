@@ -3,6 +3,7 @@ package com.coedesarrollo.backKata.controller;
 import com.coedesarrollo.backKata.dto.RequestRecord;
 import com.coedesarrollo.backKata.dto.RequestUpdateRecord;
 import com.coedesarrollo.backKata.model.RequestEntity;
+import com.coedesarrollo.backKata.model.RequestHistory;
 import com.coedesarrollo.backKata.service.RequestService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +15,6 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/requests")
-@CrossOrigin(origins = "*")
 @RequiredArgsConstructor
 public class RequestController {
 
@@ -36,7 +36,12 @@ public class RequestController {
     @PatchMapping("/{id}")
     public ResponseEntity<RequestEntity> updateStatus(
             @PathVariable UUID id,
-            @Valid @RequestBody RequestUpdateRecord dto) { // Ojo: Asegúrate de que coincida con el nombre de tu Record
+            @Valid @RequestBody RequestUpdateRecord dto) {
         return ResponseEntity.ok(service.updateStatus(id, dto));
+    }
+
+    @GetMapping("/{id}/history")
+    public ResponseEntity<List<RequestHistory>> history(@PathVariable UUID id) {
+        return ResponseEntity.ok(service.history(id));
     }
 }

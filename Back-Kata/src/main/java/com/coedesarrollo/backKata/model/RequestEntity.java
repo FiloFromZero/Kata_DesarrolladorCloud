@@ -31,6 +31,8 @@ public class RequestEntity {
     private RequestStatus status;
 
     private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+    private String updatedBy;
     private String comments;
 
     @PrePersist

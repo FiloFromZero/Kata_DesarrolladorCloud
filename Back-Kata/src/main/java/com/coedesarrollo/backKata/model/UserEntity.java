@@ -1,11 +1,15 @@
 package com.coedesarrollo.backKata.model;
 
 import jakarta.persistence.*;
+import jakarta.persistence.Index;
 import lombok.*;
 import java.util.UUID;
 
 @Entity
-@Table(name = "users", uniqueConstraints = {@UniqueConstraint(columnNames = "username")})
+@Table(name = "users",
+        uniqueConstraints = {@UniqueConstraint(columnNames = "username")},
+        indexes = {@Index(name = "idx_users_username", columnList = "username")}
+)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

@@ -1,3 +1,11 @@
 package com.coedesarrollo.backKata.dto;
 
-public record RegisterRequest(String username, String password, String role) {}
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
+public record RegisterRequest(
+        @NotBlank @Email String username,
+        @NotBlank @Size(min = 6) String password,
+        String role
+) {}

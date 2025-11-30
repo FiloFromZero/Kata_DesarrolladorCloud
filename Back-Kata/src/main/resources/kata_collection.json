@@ -1,186 +1,239 @@
 {
   "info": {
-    "_postman_id": "b6a7b2d1-5f8a-4b9e-9c1d-1a2b3c4d5e6f",
-    "name": "Kata Cloud Challenge",
-    "description": "Colección automatizada para el reto de Aprobaciones.",
+    "_postman_id": "d8e9f0a1-2b3c-4d5e-6f7g-8h9i0j1k2l3m",
+    "name": "Kata Cloud Challenge v2 (Auto-Flow)",
+    "description": "Colección profesional con scripts de auto-guardado de Tokens y IDs.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
     {
-      "name": "1. Registrar Admin",
-      "request": {
-        "method": "POST",
-        "header": [],
-        "body": {
-          "mode": "raw",
-          "raw": "{\r\n  \"username\": \"admin\",\r\n  \"password\": \"12345\",\r\n  \"role\": \"ADMIN\"\r\n}",
-          "options": {
-            "raw": {
-              "language": "json"
-            }
-          }
-        },
-        "url": {
-          "raw": "{{base_url}}/api/auth/register",
-          "host": [
-            "{{base_url}}"
-          ],
-          "path": [
-            "api",
-            "auth",
-            "register"
-          ]
-        }
-      },
-      "response": []
-    },
-    {
-      "name": "2. Login Admin (Auto-Save Token)",
-      "event": [
+      "name": "Auth",
+      "item": [
         {
-          "listen": "test",
-          "script": {
-            "exec": [
-              "// Este script captura el token automáticamente",
-              "var jsonData = pm.response.json();",
-              "if (jsonData.token) {",
-              "    pm.environment.set(\"jwt_token\", jsonData.token);",
-              "    console.log(\"Token guardado automáticamente: \" + jsonData.token);",
-              "} else {",
-              "    console.log(\"No se recibió token\");",
-              "}"
-            ],
-            "type": "text/javascript"
-          }
-        }
-      ],
-      "request": {
-        "method": "POST",
-        "header": [],
-        "body": {
-          "mode": "raw",
-          "raw": "{\r\n  \"username\": \"admin\",\r\n  \"password\": \"12345\"\r\n}",
-          "options": {
-            "raw": {
-              "language": "json"
+          "name": "1. Registrar Usuario",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"admin_pro\",\n  \"password\": \"securePass123\",\n  \"role\": \"ADMIN\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/register",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "register"
+              ]
             }
-          }
+          },
+          "response": []
         },
-        "url": {
-          "raw": "{{base_url}}/api/auth/login",
-          "host": [
-            "{{base_url}}"
+        {
+          "name": "2. Login (Guarda Token)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.token) {",
+                  "    pm.environment.set(\"jwt_token\", jsonData.token);",
+                  "    console.log(\"🔑 Token actualizado correctamente\");",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
           ],
-          "path": [
-            "api",
-            "auth",
-            "login"
-          ]
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"admin_pro\",\n  \"password\": \"securePass123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
         }
-      },
-      "response": []
+      ]
     },
     {
-      "name": "3. Crear Solicitud (Acceso AWS)",
-      "request": {
-        "auth": {
-          "type": "bearer",
-          "bearer": [
+      "name": "Requests",
+      "item": [
+        {
+          "name": "3. Crear Solicitud (Guarda ID)",
+          "event": [
             {
-              "key": "token",
-              "value": "{{jwt_token}}",
-              "type": "string"
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.id) {",
+                  "    pm.environment.set(\"current_request_id\", jsonData.id);",
+                  "    console.log(\"📄 ID de solicitud guardado: \" + jsonData.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
             }
-          ]
-        },
-        "method": "POST",
-        "header": [],
-        "body": {
-          "mode": "raw",
-          "raw": "{\r\n  \"title\": \"Acceso a AWS Producción\",\r\n  \"description\": \"Necesito revisar logs de EC2 urgentemente.\",\r\n  \"requesterName\": \"Juan Perez\",\r\n  \"approverName\": \"Maria Jefe\",\r\n  \"type\": \"ACCESO\"\r\n}",
-          "options": {
-            "raw": {
-              "language": "json"
-            }
-          }
-        },
-        "url": {
-          "raw": "{{base_url}}/api/requests",
-          "host": [
-            "{{base_url}}"
           ],
-          "path": [
-            "api",
-            "requests"
-          ]
-        }
-      },
-      "response": []
-    },
-    {
-      "name": "4. Crear Solicitud (Despliegue)",
-      "request": {
-        "auth": {
-          "type": "bearer",
-          "bearer": [
-            {
-              "key": "token",
-              "value": "{{jwt_token}}",
-              "type": "string"
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwt_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Acceso a Servidores de Producción\",\n  \"description\": \"Requerido para despliegue de emergencia v2.0\",\n  \"requesterName\": \"Juan Desarrollador\",\n  \"approverName\": \"Maria Gerente\",\n  \"type\": \"ACCESO\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/requests",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "requests"
+              ]
             }
-          ]
+          },
+          "response": []
         },
-        "method": "POST",
-        "header": [],
-        "body": {
-          "mode": "raw",
-          "raw": "{\r\n  \"title\": \"Despliegue Microservicio Pagos\",\r\n  \"description\": \"Versión 2.0 con hotfix de seguridad.\",\r\n  \"requesterName\": \"Carlos Dev\",\r\n  \"approverName\": \"Pedro DevOps\",\r\n  \"type\": \"DESPLIEGUE\"\r\n}",
-          "options": {
-            "raw": {
-              "language": "json"
+        {
+          "name": "4. Listar Todas",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwt_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/requests",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "requests"
+              ]
             }
-          }
+          },
+          "response": []
         },
-        "url": {
-          "raw": "{{base_url}}/api/requests",
-          "host": [
-            "{{base_url}}"
-          ],
-          "path": [
-            "api",
-            "requests"
-          ]
-        }
-      },
-      "response": []
-    },
-    {
-      "name": "5. Ver Todas",
-      "request": {
-        "auth": {
-          "type": "bearer",
-          "bearer": [
-            {
-              "key": "token",
-              "value": "{{jwt_token}}",
-              "type": "string"
+        {
+          "name": "5. Aprobar Solicitud (Usa ID Auto)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwt_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"APPROVED\",\n  \"comments\": \"Aprobado tras revisión de seguridad.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/requests/{{current_request_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "requests",
+                "{{current_request_id}}"
+              ]
             }
-          ]
+          },
+          "response": []
         },
-        "method": "GET",
-        "header": [],
-        "url": {
-          "raw": "{{base_url}}/api/requests",
-          "host": [
-            "{{base_url}}"
-          ],
-          "path": [
-            "api",
-            "requests"
-          ]
+        {
+          "name": "6. Ver Historial (Usa ID Auto)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwt_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/requests/{{current_request_id}}/history",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "requests",
+                "{{current_request_id}}",
+                "history"
+              ]
+            }
+          },
+          "response": []
         }
-      },
-      "response": []
+      ]
     }
   ],
   "variable": [
@@ -190,6 +243,10 @@
     },
     {
       "key": "jwt_token",
+      "value": ""
+    },
+    {
+      "key": "current_request_id",
       "value": ""
     }
   ]

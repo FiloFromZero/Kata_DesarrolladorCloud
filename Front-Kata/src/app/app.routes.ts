@@ -1,14 +1,10 @@
 import { Routes } from '@angular/router';
-import { DashboardLayoutComponent } from './components/layout/dashboard-layout.component';
-import { DashboardComponent } from './components/dashboard/dashboard.component';
-import { ApprovalDetailComponent } from './components/approval-detail/approval-detail.component';
-import { LoginComponent } from './components/login/login.component';
 import { authGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
   {
     path: '',
-    component: DashboardLayoutComponent,
+    loadComponent: () => import('./components/layout/dashboard-layout.component').then(m => m.DashboardLayoutComponent),
     canActivate: [authGuard],
     children: [
       {
@@ -18,12 +14,14 @@ export const routes: Routes = [
       },
       {
         path: 'dashboard',
-        component: DashboardComponent
+        loadComponent: () => import('./components/dashboard/dashboard.component').then(m => m.DashboardComponent)
       },
-      { path: 'my-requests', component: DashboardComponent },
-      { path: 'history', component: DashboardComponent },
-      { path: 'request/:id', component: ApprovalDetailComponent }
+      { path: 'my-requests', loadComponent: () => import('./components/dashboard/dashboard.component').then(m => m.DashboardComponent) },
+      { path: 'history', loadComponent: () => import('./components/dashboard/dashboard.component').then(m => m.DashboardComponent) },
+      { path: 'request/new', loadComponent: () => import('./components/create-request/create-request.component').then(m => m.CreateRequestComponent) },
+      { path: 'request/:id', loadComponent: () => import('./components/approval-detail/approval-detail.component').then(m => m.ApprovalDetailComponent) }
     ]
   },
-  { path: 'login', component: LoginComponent }
+  { path: 'login', loadComponent: () => import('./components/login/login.component').then(m => m.LoginComponent) }
+  ,{ path: 'register', loadComponent: () => import('./components/register/register.component').then(m => m.RegisterComponent) }
 ];

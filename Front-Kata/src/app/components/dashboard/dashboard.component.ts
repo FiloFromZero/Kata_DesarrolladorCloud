@@ -1,12 +1,14 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { NgClass } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { RequestsService, UIRequest } from '../../services/requests.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
   imports: [NgClass, RouterLink],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="space-y-6">
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -28,21 +30,18 @@ import { RequestsService, UIRequest } from '../../services/requests.service';
             <div class="text-2xl font-semibold text-slate-800">{{ processedCount }}</div>
           </div>
         </div>
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 flex items-center gap-4 transition-shadow duration-200 hover:shadow-md">
-          <div class="h-10 w-10 rounded-lg bg-[#e3efff] text-[#0b4dbb] flex items-center justify-center">
-            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 8v5h5v-2h-3V8h-2ZM12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2Zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8Z"/></svg>
-          </div>
-          <div>
-            <div class="text-sm text-slate-500">Tiempo promedio</div>
-            <div class="text-2xl font-semibold text-slate-800">{{ avgTime }}</div>
-          </div>
-        </div>
+        
       </div>
 
       <div class="bg-white rounded-xl shadow-sm border border-gray-200">
-        <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+        <div class="px-4 md:px-6 py-4 border-b border-gray-200 flex items-center justify-between">
           <div class="text-sm font-medium text-slate-700">Solicitudes</div>
-          <div class="text-xs text-slate-500">Actualizado ahora</div>
+          <div class="flex items-center gap-3">
+            <a [routerLink]="['/request/new']" class="inline-flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium bg-white text-slate-700 ring-1 ring-gray-300 hover:bg-slate-50">Nueva Solicitud
+              <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M11 11V5h2v6h6v2h-6v6h-2v-6H5v-2h6Z"/></svg>
+            </a>
+            <div class="text-xs text-slate-500">Actualizado ahora</div>
+          </div>
         </div>
         <div class="overflow-x-auto">
           <table class="min-w-full">
@@ -51,8 +50,9 @@ import { RequestsService, UIRequest } from '../../services/requests.service';
                 <th class="px-6 py-3 text-left font-medium">ID</th>
                 <th class="px-6 py-3 text-left font-medium">Título</th>
                 <th class="px-6 py-3 text-left font-medium">Solicitante</th>
+                <th class="px-6 py-3 text-left font-medium">Aprobador</th>
                 <th class="px-6 py-3 text-left font-medium">Tipo</th>
-                <th class="px-6 py-3 text-left font-medium">Fecha</th>
+                <th class="px-6 py-3 text-left font-medium hidden sm:table-cell">Fecha</th>
                 <th class="px-6 py-3 text-left font-medium">Estado</th>
                 <th class="px-6 py-3 text-right font-medium">Acciones</th>
               </tr>
@@ -63,15 +63,15 @@ import { RequestsService, UIRequest } from '../../services/requests.service';
                   <td class="px-6 py-3 font-mono text-xs text-slate-700">{{ item.id }}</td>
                   <td class="px-6 py-3 text-slate-800">{{ item.title }}</td>
                   <td class="px-6 py-3">
-                    <div class="flex items-center gap-3">
-                      <img [src]="item.requester.avatar" alt="" class="h-8 w-8 rounded-full ring-1 ring-white">
-                      <span class="text-slate-700">{{ item.requester.name }}</span>
-                    </div>
+                    <span class="text-slate-700">{{ item.requester.name }}</span>
+                  </td>
+                  <td class="px-6 py-3">
+                    <span class="text-slate-700 break-all">{{ item.approverName }}</span>
                   </td>
                   <td class="px-6 py-3">
                     <span class="px-2 py-1 text-xs rounded-md ring-1" [ngClass]="typeStyles[item.type]">{{ item.type }}</span>
                   </td>
-                  <td class="px-6 py-3 text-slate-600">{{ item.date }}</td>
+                  <td class="px-6 py-3 text-slate-600 hidden sm:table-cell">{{ item.date }}</td>
                   <td class="px-6 py-3">
                     <span class="px-2 py-1 text-xs rounded-md ring-1" [ngClass]="stateStyles[item.status]">{{ statusLabel(item.status) }}</span>
                   </td>
@@ -86,15 +86,65 @@ import { RequestsService, UIRequest } from '../../services/requests.service';
           </table>
         </div>
       </div>
-  </div>
+
+      <div class="bg-white rounded-xl shadow-sm border border-gray-200 mt-6">
+        <div class="px-4 md:px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+          <div class="text-sm font-medium text-slate-700">Mis solicitudes creadas</div>
+          <div class="text-xs text-slate-500">Solo las que yo creé</div>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="min-w-full">
+            <thead class="bg-slate-50 text-slate-600 text-xs">
+              <tr>
+                <th class="px-6 py-3 text-left font-medium">ID</th>
+                <th class="px-6 py-3 text-left font-medium">Título</th>
+                <th class="px-6 py-3 text-left font-medium">Aprobador</th>
+                <th class="px-6 py-3 text-left font-medium">Tipo</th>
+                <th class="px-6 py-3 text-left font-medium hidden sm:table-cell">Fecha</th>
+                <th class="px-6 py-3 text-left font-medium">Estado</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100 text-sm">
+              @for (item of requestsCreated; track item.id) {
+                <tr class="hover:bg-slate-50 transition-colors duration-150">
+                  <td class="px-6 py-3 font-mono text-xs text-slate-700">{{ item.id }}</td>
+                  <td class="px-6 py-3 text-slate-800">{{ item.title }}</td>
+                  <td class="px-6 py-3"><span class="text-slate-700 break-all">{{ item.approverName }}</span></td>
+                  <td class="px-6 py-3"><span class="px-2 py-1 text-xs rounded-md ring-1" [ngClass]="typeStyles[item.type]">{{ item.type }}</span></td>
+                  <td class="px-6 py-3 text-slate-600 hidden sm:table-cell">{{ item.date }}</td>
+                  <td class="px-6 py-3"><span class="px-2 py-1 text-xs rounded-md ring-1" [ngClass]="stateStyles[item.status]">{{ statusLabel(item.status) }}</span></td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
   `
 })
 export class DashboardComponent {
   readonly service = inject(RequestsService);
+  private readonly cdr = inject(ChangeDetectorRef);
+  private readonly auth = inject(AuthService);
   requests: UIRequest[] = [];
+  requestsCreated: UIRequest[] = [];
+  pendingCount = 0;
+  processedCount = 0;
 
   constructor() {
-    this.service.getAll().subscribe(data => this.requests = data);
+    if (this.auth.isBrowser() && this.auth.getToken()) {
+      this.service.getAll().subscribe(data => {
+        this.requests = data ?? [];
+        const list = this.requests;
+        this.pendingCount = list.filter(r => r.status === 'pending').length;
+        this.processedCount = list.filter(r => r.status !== 'pending').length;
+        this.cdr.markForCheck();
+      });
+      this.service.getCreatedByMe().subscribe(data => { this.requestsCreated = data ?? []; this.cdr.markForCheck(); });
+    } else {
+      this.requests = [];
+      this.requestsCreated = [];
+    }
   }
 
   readonly stateStyles: Record<'pending' | 'approved' | 'rejected', string> = {
@@ -106,12 +156,20 @@ export class DashboardComponent {
   readonly typeStyles: Record<string, string> = {
     Despliegue: 'bg-[#e3efff] text-[#0b4dbb] ring-[#c9dbff]',
     Acceso: 'bg-cyan-100 text-cyan-700 ring-cyan-200',
-    Cambio: 'bg-fuchsia-100 text-fuchsia-700 ring-fuchsia-200'
+    Cambio: 'bg-fuchsia-100 text-fuchsia-700 ring-fuchsia-200',
+    'Publicación Microservicio': 'bg-indigo-100 text-indigo-700 ring-indigo-200',
+    'Acceso Herramientas': 'bg-amber-100 text-amber-700 ring-amber-200',
+    'Cambios CI/CD': 'bg-sky-100 text-sky-700 ring-sky-200',
+    'Nueva Herramienta': 'bg-violet-100 text-violet-700 ring-violet-200',
+    'Base de Datos': 'bg-teal-100 text-teal-700 ring-teal-200',
+    Seguridad: 'bg-rose-100 text-rose-700 ring-rose-200',
+    Infraestructura: 'bg-stone-100 text-stone-700 ring-stone-200',
+    'API Gateway': 'bg-lime-100 text-lime-700 ring-lime-200'
   };
 
-  get pendingCount() { return this.requests.filter(r => r.status === 'pending').length; }
-  get processedCount() { return this.requests.filter(r => r.status !== 'pending').length; }
-  readonly avgTime = '2.3 días';
+  
+  
 
   statusLabel(s: 'pending' | 'approved' | 'rejected') { return s === 'pending' ? 'Pendiente' : s === 'approved' ? 'Aprobado' : 'Rechazado'; }
+  
 }
