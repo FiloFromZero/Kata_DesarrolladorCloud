@@ -39,3 +39,35 @@ variable "smtp_password" {
   type        = string
   sensitive   = true
 }
+
+# Mail sender (From) address for outgoing emails
+variable "mail_from" {
+  description = "Mail From address used by the application"
+  type        = string
+  default     = "no-reply@kata.local"
+}
+
+# CORS configuration for production
+variable "allowed_origins" {
+  description = "Comma-separated list of allowed origins for CORS"
+  type        = string
+  default     = "*"
+}
+
+variable "allowed_methods" {
+  description = "Comma-separated list of allowed HTTP methods for CORS"
+  type        = string
+  default     = "GET,POST,PUT,PATCH,DELETE,OPTIONS"
+}
+
+variable "allow_credentials" {
+  description = "Whether CORS should allow credentials"
+  type        = string
+  default     = "true"
+}
+
+variable "cors_max_age" {
+  description = "CORS preflight cache max age in seconds"
+  type        = string
+  default     = "3600"
+}

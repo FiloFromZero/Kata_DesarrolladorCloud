@@ -46,7 +46,14 @@ resource "aws_ecs_task_definition" "main" {
         { name = "DB_PASSWORD", value = var.db_password },
         { name = "JWT_SECRET", value = var.jwt_secret },
         { name = "SMTP_USER", value = var.smtp_user },
-        { name = "SMTP_PASSWORD", value = var.smtp_password }
+        { name = "SMTP_PASSWORD", value = var.smtp_password },
+        # Mail From
+        { name = "MAIL_FROM", value = var.mail_from },
+        # CORS
+        { name = "ALLOWED_ORIGINS", value = var.allowed_origins },
+        { name = "ALLOWED_METHODS", value = var.allowed_methods },
+        { name = "ALLOW_CREDENTIALS", value = var.allow_credentials },
+        { name = "CORS_MAX_AGE", value = var.cors_max_age }
       ]
       logConfiguration = {
         logDriver = "awslogs"
