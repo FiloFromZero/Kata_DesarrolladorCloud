@@ -45,9 +45,7 @@ resource "aws_ecs_task_definition" "main" {
         # In a real scenario, we would use secrets = [{ name = "DB_PASSWORD", valueFrom = "arn:..." }]
         { name = "DB_PASSWORD", value = var.db_password },
         { name = "JWT_SECRET", value = var.jwt_secret },
-        { name = "SMTP_USER", value = var.smtp_user },
-        { name = "SMTP_PASSWORD", value = var.smtp_password },
-        # Mail From
+        # Mail From (for email simulation only - no real emails sent)
         { name = "MAIL_FROM", value = var.mail_from },
         # CORS
         { name = "ALLOWED_ORIGINS", value = var.allowed_origins },
@@ -125,6 +123,27 @@ resource "aws_iam_role" "ecs_task_role" {
         Principal = {
           Service = "ecs-tasks.amazonaws.com"
         }
+      }
+    ]
+  })
+}
+
+# IAM Policy for CloudWatch Metrics
+resource "aws_iam_role_policy" "ecs_task_cloudwatch_policy" {
+  name = "${var.project_name}-task-cloudwatch-policy"
+  role = aws_iam_role.ecs_task_role.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "cloudwatch:PutMetricData",
+          "cloudwatch:GetMetricStatistics",
+          "cloudwatch:ListMetrics"
+        ]
+        Resource = "*"
       }
     ]
   })

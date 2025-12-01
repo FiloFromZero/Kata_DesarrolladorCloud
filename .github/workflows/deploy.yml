@@ -42,11 +42,8 @@ jobs:
         terraform apply -auto-approve -target=aws_ecr_repository.main \
           -var="aws_region=${{ env.AWS_REGION }}" \
           -var="project_name=${{ env.PROJECT_NAME }}" \
-          -var="mail_from=${{ secrets.SMTP_USER }}" \
           -var="db_password=${{ secrets.DB_PASSWORD }}" \
-          -var="jwt_secret=${{ secrets.JWT_SECRET }}" \
-          -var="smtp_user=${{ secrets.SMTP_USER }}" \
-          -var="smtp_password=${{ secrets.SMTP_PASSWORD }}"
+          -var="jwt_secret=${{ secrets.JWT_SECRET }}"
 
   build-and-push:
     name: 2. Build & Push Docker Image
@@ -115,8 +112,5 @@ jobs:
         terraform apply -auto-approve \
           -var="aws_region=${{ env.AWS_REGION }}" \
           -var="project_name=${{ env.PROJECT_NAME }}" \
-          -var="mail_from=${{ secrets.SMTP_USER }}" \
           -var="db_password=${{ secrets.DB_PASSWORD }}" \
-          -var="jwt_secret=${{ secrets.JWT_SECRET }}" \
-          -var="smtp_user=${{ secrets.SMTP_USER }}" \
-          -var="smtp_password=${{ secrets.SMTP_PASSWORD }}"
+          -var="jwt_secret=${{ secrets.JWT_SECRET }}"

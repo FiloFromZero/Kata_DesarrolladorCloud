@@ -1,76 +1,48 @@
 package com.coedesarrollo.backKata.service;
 
 import com.coedesarrollo.backKata.model.RequestEntity;
-import jakarta.mail.Message;
-import jakarta.mail.internet.InternetAddress;
-import jakarta.mail.internet.MimeBodyPart;
-import jakarta.mail.internet.MimeMessage;
-import jakarta.mail.internet.MimeMultipart;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 import java.util.regex.Pattern;
 
 @Service
-@RequiredArgsConstructor
 @Slf4j
 public class EmailService {
 
-    private final JavaMailSender mailSender;
-
-    
-    @Value("${app.mail.from}")
+    @Value("${app.mail.from:no-reply@kata.local}")
     private String from;
 
-    
     private static final Pattern EMAIL_PATTERN = Pattern.compile("^[A-Za-z0-9+_.-]+@(.+)$");
 
-    
     public void sendApprovalPending(String approverEmail, RequestEntity request) {
-        
         if (approverEmail == null || approverEmail.isBlank()) {
             log.warn("⚠️ Intento de envío de correo a dirección vacía o nula. ID Solicitud: {}", request.getId());
             return;
         }
 
-        
         if (!EMAIL_PATTERN.matcher(approverEmail).matches()) {
             log.error("❌ Formato de correo inválido: '{}'. No se enviará notificación.", approverEmail);
             return;
         }
 
-        try {
-            
-            MimeMessage message = mailSender.createMimeMessage();
-
-            
-            message.setFrom(new InternetAddress(from));
-            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(approverEmail));
-            message.setSubject("Nueva Solicitud Pendiente: " + nullSafe(request.getTitle()), "UTF-8");
-
-            
-            String body = buildHtmlBody(request);
-            MimeBodyPart htmlPart = new MimeBodyPart();
-            htmlPart.setContent(body, "text/html; charset=UTF-8");
-
-            MimeMultipart multipart = new MimeMultipart();
-            multipart.addBodyPart(htmlPart);
-            message.setContent(multipart);
-            message.saveChanges();
-
-            
-            mailSender.send(message);
-            log.info("✅ Correo enviado exitosamente a [{}] para solicitud ID: {}", approverEmail, request.getId());
-
-        } catch (Exception ex) {
-            
-            
-            log.error("🔥 Error crítico enviando correo a [{}]: {}", approverEmail, ex.getMessage());
-        }
+        // Simulación de envío de email - solo imprime en consola
+        String subject = "Nueva Solicitud Pendiente: " + nullSafe(request.getTitle());
+        String body = buildHtmlBody(request);
+        
+        log.info("═══════════════════════════════════════════════════════════════");
+        log.info("📧 SIMULACIÓN DE ENVÍO DE EMAIL");
+        log.info("═══════════════════════════════════════════════════════════════");
+        log.info("De: {}", from);
+        log.info("Para: {}", approverEmail);
+        log.info("Asunto: {}", subject);
+        log.info("───────────────────────────────────────────────────────────────");
+        log.info("Contenido del email:");
+        log.info("{}", body);
+        log.info("───────────────────────────────────────────────────────────────");
+        log.info("✅ Email simulado enviado exitosamente a [{}] para solicitud ID: {}", approverEmail, request.getId());
+        log.info("═══════════════════════════════════════════════════════════════");
     }
 
     

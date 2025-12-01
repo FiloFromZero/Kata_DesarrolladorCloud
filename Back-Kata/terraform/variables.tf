@@ -1,7 +1,7 @@
 variable "aws_region" {
   description = "AWS Region"
   type        = string
-  default     = "us-east-1"
+  default     = "us-east-2"
 }
 
 variable "project_name" {
@@ -28,21 +28,9 @@ variable "jwt_secret" {
   sensitive   = true
 }
 
-variable "smtp_user" {
-  description = "SMTP Username"
-  type        = string
-  sensitive   = true
-}
-
-variable "smtp_password" {
-  description = "SMTP Password"
-  type        = string
-  sensitive   = true
-}
-
-# Mail sender (From) address for outgoing emails
+# Mail sender (From) address for email simulation (no real emails sent)
 variable "mail_from" {
-  description = "Mail From address used by the application"
+  description = "Mail From address used for email simulation"
   type        = string
   default     = "no-reply@kata.local"
 }

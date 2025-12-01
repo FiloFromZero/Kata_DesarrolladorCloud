@@ -1,14 +1,13 @@
 import { Component, inject, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { NgClass } from '@angular/common';
 import { ScrollingModule } from '@angular/cdk/scrolling';
-import { RouterLink } from '@angular/router';
 import { RequestsService, UIRequest } from '../../services/requests.service';
 import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-history',
   standalone: true,
-  imports: [NgClass, RouterLink, ScrollingModule],
+  imports: [NgClass, ScrollingModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="space-y-6">
