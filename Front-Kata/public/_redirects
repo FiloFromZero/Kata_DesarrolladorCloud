@@ -1,0 +1,4 @@
+# Redirecciones para Angular SPA
+# Todas las rutas deben redirigir a index.html para que Angular Router funcione
+/*    /index.html   200
+

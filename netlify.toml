@@ -12,16 +12,8 @@
   NODE_VERSION = "20"
 
 # Configuración de redirecciones para SPA (Single Page Application)
-# Esto asegura que todas las rutas de Angular funcionen correctamente
-# IMPORTANTE: La regla catch-all debe estar al final y debe excluir archivos estáticos
-
-# Redirigir la raíz explícitamente
-[[redirects]]
-  from = "/"
-  to = "/index.html"
-  status = 200
-
-# Redirigir todas las demás rutas (excepto archivos estáticos) a index.html
+# Redirigir todas las rutas a index.html para que Angular Router funcione
+# Netlify automáticamente excluye archivos estáticos (JS, CSS, imágenes)
 [[redirects]]
   from = "/*"
   to = "/index.html"
