@@ -13,12 +13,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Value;
-import javax.naming.directory.DirContext;
-import javax.naming.directory.InitialDirContext;
-import javax.naming.directory.Attributes;
-import javax.naming.NamingException;
-import javax.naming.directory.Attribute;
-import java.util.Hashtable;
 
 @Service
 @RequiredArgsConstructor
@@ -41,34 +35,23 @@ public class AuthenticationService {
             throw new IllegalArgumentException("Formato de correo inválido");
         }
         String domain = email.substring(at + 1);
-        if (!hasMxRecord(domain)) {
-            throw new IllegalArgumentException("El dominio de correo no tiene registros MX válidos");
-        }
-        if (repository.existsByUsername(email)) {
+        
+        try {
+            var user = UserEntity.builder()
+                    .username(email)
+                    .password(passwordEncoder.encode(request.password()))
+                    .role(request.role() != null ? request.role() : "USER")
+                    .build();
+            repository.save(user);
+            var jwtToken = jwtService.generateToken(user.getUsername());
+            return new AuthenticationResponse(jwtToken);
+        } catch (org.springframework.dao.DataIntegrityViolationException e) {
+            
             throw new ResourceConflictException("El correo ya está registrado");
         }
-        var user = UserEntity.builder()
-                .username(email)
-                .password(passwordEncoder.encode(request.password()))
-                .role(request.role() != null ? request.role() : "USER")
-                .build();
-        repository.save(user);
-        var jwtToken = jwtService.generateToken(user.getUsername());
-        return new AuthenticationResponse(jwtToken);
     }
 
-    private boolean hasMxRecord(String domain) {
-        try {
-            Hashtable<String, String> env = new Hashtable<>();
-            env.put("java.naming.factory.initial", "com.sun.jndi.dns.DnsContextFactory");
-            DirContext ictx = new InitialDirContext(env);
-            Attributes attrs = ictx.getAttributes(domain, new String[]{"MX"});
-            Attribute attr = attrs.get("MX");
-            return attr != null && attr.size() > 0;
-        } catch (NamingException ex) {
-            return false;
-        }
-    }
+    
 
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
         String username = request.username().trim().toLowerCase();

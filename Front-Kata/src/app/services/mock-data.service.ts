@@ -105,7 +105,7 @@ export class MockDataService {
     if (request) {
       request.status = status;
       request.updatedAt = new Date();
-      // In a real app, we would also store the comments
+      
     }
   }
 }

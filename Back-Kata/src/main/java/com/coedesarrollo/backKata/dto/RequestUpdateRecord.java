@@ -5,5 +5,5 @@ import com.coedesarrollo.backKata.model.RequestStatus;
 
 public record RequestUpdateRecord(
         @NotNull(message = "El estado es obligatorio") RequestStatus status,
-        String comments // Opcional (aunque el PDF sugiere que es vital para rechazos)
+        String comments 
 ) {}

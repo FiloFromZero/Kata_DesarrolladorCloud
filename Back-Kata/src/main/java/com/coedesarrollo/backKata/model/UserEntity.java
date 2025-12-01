@@ -21,11 +21,11 @@ public class UserEntity {
     private UUID id;
 
     @Column(nullable = false)
-    private String username; // El "usuario de red"
+    private String username; 
 
     @Column(nullable = false)
-    private String password; // La contraseña encriptada
+    private String password; 
 
     @Column(nullable = false)
-    private String role; // "USER" o "ADMIN"
+    private String role; 
 }

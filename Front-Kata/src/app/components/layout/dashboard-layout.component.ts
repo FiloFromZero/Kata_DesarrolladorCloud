@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { NgIf, NgClass } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
@@ -8,12 +8,13 @@ import { RequestsService, UIRequest } from '../../services/requests.service';
   selector: 'app-dashboard-layout',
   standalone: true,
   imports: [RouterOutlet, RouterLink, RouterLinkActive, NgIf, NgClass],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="min-h-screen bg-slate-50 flex">
       <aside class="w-64 bg-[#0b4dbb] text-white flex flex-col">
         <div class="h-16 flex items-center px-6 text-lg font-semibold">CoE Development</div>
         <nav class="flex-1 px-2 space-y-1">
-          <a routerLink="/" routerLinkActive="bg-[#093d99]"
+          <a routerLink="/dashboard" routerLinkActive="bg-[#093d99]"
              class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-[#093d99] transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/80 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b4dbb]">
             <svg class="h-5 w-5 text-white/80" viewBox="0 0 20 20" fill="currentColor"><path d="M10 2.5 2 8v9h5v-5h6v5h5V8l-8-5.5Z"/></svg>
             <span>Dashboard</span>

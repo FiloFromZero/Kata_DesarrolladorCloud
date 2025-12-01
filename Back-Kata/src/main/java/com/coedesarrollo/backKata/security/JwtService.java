@@ -14,8 +14,8 @@ import java.util.function.Function;
 @Service
 public class JwtService {
 
-    // 1. CAMBIO IMPORTANTE: Quitamos 'static final'.
-    // Usamos @Value para que Spring inyecte la clave desde application.properties
+    
+    
     @Value("${jwt.secret}")
     private String secretKey;
 
@@ -23,7 +23,7 @@ public class JwtService {
         return Jwts.builder()
                 .subject(username)
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10)) // 10 Horas
+                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10)) 
                 .signWith(getSigningKey())
                 .compact();
     }
@@ -59,7 +59,7 @@ public class JwtService {
     }
 
     private SecretKey getSigningKey() {
-        // 2. Usamos la variable inyectada 'secretKey'
+        
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         return Keys.hmacShaKeyFor(keyBytes);
     }
