@@ -1,0 +1,170 @@
+name: Deploy Front-Kata to AWS
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - 'Front-Kata/**'
+  workflow_dispatch:
+
+env:
+  AWS_REGION: us-east-1
+  PROJECT_NAME: front-kata
+
+jobs:
+  build:
+    name: 1. Build Frontend
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+        cache-dependency-path: Front-Kata/package-lock.json
+
+    - name: Install dependencies
+      working-directory: ./Front-Kata
+      run: npm ci
+
+    - name: Build for production
+      working-directory: ./Front-Kata
+      run: npm run build -- --configuration=production
+
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: frontend-build
+        path: Front-Kata/dist/Front-Kata/browser
+        retention-days: 1
+
+  deploy-infra:
+    name: 2. Deploy Infrastructure (Terraform)
+    needs: build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./Front-Kata/terraform
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v3
+      with:
+        terraform_version: "1.9.0"
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
+
+    - name: Terraform Init
+      run: terraform init
+
+    - name: Terraform Apply
+      run: terraform apply -auto-approve
+
+    - name: Get S3 Bucket Name
+      id: get-bucket
+      run: |
+        BUCKET_NAME=$(terraform output -raw s3_bucket_name)
+        echo "bucket_name=$BUCKET_NAME" >> $GITHUB_OUTPUT
+        echo "S3 Bucket: $BUCKET_NAME"
+
+    - name: Get CloudFront Distribution ID
+      id: get-distribution
+      run: |
+        DIST_ID=$(terraform output -raw cloudfront_distribution_id)
+        echo "distribution_id=$DIST_ID" >> $GITHUB_OUTPUT
+        echo "CloudFront Distribution ID: $DIST_ID"
+
+    - name: Save outputs
+      run: |
+        terraform output -json > terraform-outputs.json
+      continue-on-error: true
+
+    - name: Upload Terraform outputs
+      uses: actions/upload-artifact@v4
+      with:
+        name: terraform-outputs
+        path: Front-Kata/terraform/terraform-outputs.json
+        retention-days: 1
+
+  deploy-files:
+    name: 3. Upload Files to S3
+    needs: [build, deploy-infra]
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Download build artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: frontend-build
+        path: ./build-output
+
+    - name: Download Terraform outputs
+      uses: actions/download-artifact@v4
+      with:
+        name: terraform-outputs
+        path: ./terraform-outputs
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
+
+    - name: Get S3 Bucket Name from Terraform
+      id: get-bucket
+      run: |
+        BUCKET_NAME=$(cat terraform-outputs/terraform-outputs.json | jq -r '.s3_bucket_name.value')
+        echo "bucket_name=$BUCKET_NAME" >> $GITHUB_OUTPUT
+        echo "S3 Bucket: $BUCKET_NAME"
+
+    - name: Get CloudFront Distribution ID
+      id: get-distribution
+      run: |
+        DIST_ID=$(cat terraform-outputs/terraform-outputs.json | jq -r '.cloudfront_distribution_id.value')
+        echo "distribution_id=$DIST_ID" >> $GITHUB_OUTPUT
+        echo "CloudFront Distribution ID: $DIST_ID"
+
+    - name: Upload files to S3
+      run: |
+        aws s3 sync ./build-output s3://${{ steps.get-bucket.outputs.bucket_name }} --delete
+        echo "✅ Files uploaded to S3"
+
+    - name: Invalidate CloudFront cache
+      run: |
+        aws cloudfront create-invalidation \
+          --distribution-id ${{ steps.get-distribution.outputs.distribution_id }} \
+          --paths "/*"
+        echo "✅ CloudFront cache invalidated"
+
+    - name: Get CloudFront URL
+      id: get-url
+      run: |
+        URL=$(cat terraform-outputs/terraform-outputs.json | jq -r '.cloudfront_url.value')
+        echo "cloudfront_url=$URL" >> $GITHUB_OUTPUT
+        echo "🌐 Frontend URL: $URL"
+
+    - name: Deployment Summary
+      run: |
+        echo "## 🚀 Frontend Desplegado Exitosamente" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "**CloudFront URL:** ${{ steps.get-url.outputs.cloudfront_url }}" >> $GITHUB_STEP_SUMMARY
+        echo "**S3 Bucket:** ${{ steps.get-bucket.outputs.bucket_name }}" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "⏳ Nota: CloudFront puede tardar 15-20 minutos en propagar cambios globalmente" >> $GITHUB_STEP_SUMMARY
+
