@@ -1,0 +1,18 @@
+# General
+.git
+.gitignore
+.idea
+.vscode
+**/.DS_Store
+**/Thumbs.db
+
+# Gradle caches and build outputs
+.gradle
+build
+out
+!gradle/wrapper/gradle-wrapper.jar
+
+# Local env/config
+.env
+docker-compose.yml
+bin
