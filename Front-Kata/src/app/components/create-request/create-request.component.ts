@@ -167,12 +167,10 @@ export class CreateRequestComponent implements OnInit {
       this.form.patchValue({ requesterName: currentUser });
     }
     
-    // Load users immediately without setTimeout
     if (this.auth.isBrowser() && this.auth.getToken()) {
       this.searchUsers('');
     }
     
-    // Use takeUntilDestroyed for automatic cleanup
     this.auth.isAuthenticated$.pipe(
       takeUntilDestroyed()
     ).subscribe(() => {
@@ -180,13 +178,11 @@ export class CreateRequestComponent implements OnInit {
       this.form.patchValue({ requesterName: me });
       this.me = me;
       
-      // Re-filter current user list
       if (this.users?.length) {
         this.users = this.users.filter(u => u.username.trim().toLowerCase() !== me.trim().toLowerCase());
       }
     });
     
-    // Track last valid approver selection
     this.form.get('approverName')?.valueChanges.pipe(
       takeUntilDestroyed()
     ).subscribe(val => {

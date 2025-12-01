@@ -39,7 +39,6 @@ import { RequestsService, UIRequest } from '../../services/requests.service';
                 </span>
               </button>
               
-              <!-- Dropdown de notificaciones -->
               <div *ngIf="showNotifications" class="notification-dropdown absolute right-0 mt-2 w-96 bg-white rounded-lg shadow-lg border border-gray-200 z-50 max-h-[500px] flex flex-col">
                 <div class="px-4 py-3 border-b border-gray-200 flex items-center justify-between">
                   <h3 class="text-sm font-semibold text-slate-800">Solicitudes Pendientes</h3>
@@ -160,7 +159,7 @@ export class DashboardLayoutComponent implements OnInit {
           }
           prev = next;
           this.pendingForMeCount = next;
-          this.pendingRequests = pending.slice(0, 10); // Mostrar máximo 10 en el dropdown
+          this.pendingRequests = pending.slice(0, 10);
           this.cdr.markForCheck();
         }, 0);
       });
@@ -179,7 +178,6 @@ export class DashboardLayoutComponent implements OnInit {
   toggleNotifications() {
     this.showNotifications = !this.showNotifications;
     if (this.showNotifications) {
-      // Recargar solicitudes pendientes cuando se abre el dropdown
       const me = this.auth.getUsername();
       if (me) {
         this.requests.getAll().subscribe(list => {

@@ -41,7 +41,6 @@ class AuthenticationServiceTest {
     @Test
     void register_creaUsuario_yDevuelveToken() {
         RegisterRequest req = new RegisterRequest("user@example.com", "pass", "USER");
-        when(repository.existsByUsername("user@example.com")).thenReturn(false);
         when(passwordEncoder.encode("pass")).thenReturn("ENCODED");
         when(jwtService.generateToken("user@example.com")).thenReturn("JWT");
 
@@ -67,7 +66,10 @@ class AuthenticationServiceTest {
     @Test
     void register_conflictoSiExisteUsuario() {
         RegisterRequest req = new RegisterRequest("user@example.com", "pass", "USER");
-        when(repository.existsByUsername("user@example.com")).thenReturn(true);
+        // Simula la restricción de unicidad en base de datos lanzando DataIntegrityViolationException
+        when(passwordEncoder.encode("pass")).thenReturn("ENCODED");
+        doThrow(new org.springframework.dao.DataIntegrityViolationException("duplicate"))
+                .when(repository).save(any());
         assertThrows(ResourceConflictException.class, () -> service.register(req));
     }
 
@@ -113,7 +115,6 @@ class AuthenticationServiceTest {
     @Test
     void register_normalizaUsuario_trim_y_lowercase() {
         RegisterRequest req = new RegisterRequest("  USER@EXAMPLE.COM  ", "pass", "USER");
-        when(repository.existsByUsername("user@example.com")).thenReturn(false);
         when(passwordEncoder.encode("pass")).thenReturn("ENC");
         when(jwtService.generateToken("user@example.com")).thenReturn("JWT");
         AuthenticationResponse res = service.register(req);

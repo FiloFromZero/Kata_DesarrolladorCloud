@@ -20,7 +20,6 @@ class EmailServiceTest {
                 .type("deployment")
                 .build();
         
-        // No debe lanzar excepción
         assertDoesNotThrow(() -> svc.sendApprovalPending("bob@local", req));
     }
 
@@ -34,7 +33,6 @@ class EmailServiceTest {
                 .title("Prueba")
                 .build();
         
-        // No debe lanzar excepción incluso con email vacío
         assertDoesNotThrow(() -> svc.sendApprovalPending("", req));
     }
 
@@ -50,7 +48,6 @@ class EmailServiceTest {
                 .type("deployment")
                 .build();
         
-        // No debe lanzar excepción incluso con email inválido
         assertDoesNotThrow(() -> svc.sendApprovalPending("email-invalido", req));
     }
 
@@ -64,7 +61,6 @@ class EmailServiceTest {
                 .title("Prueba")
                 .build();
         
-        // No debe lanzar excepción incluso con email null
         assertDoesNotThrow(() -> svc.sendApprovalPending(null, req));
     }
 }

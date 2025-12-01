@@ -27,7 +27,6 @@ public class EmailService {
             return;
         }
 
-        // Simulación de envío de email - solo imprime en consola
         String subject = "Nueva Solicitud Pendiente: " + nullSafe(request.getTitle());
         String body = buildHtmlBody(request);
         

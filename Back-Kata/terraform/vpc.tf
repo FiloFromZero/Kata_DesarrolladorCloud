@@ -8,7 +8,6 @@ resource "aws_vpc" "main" {
   }
 }
 
-# Public Subnets
 resource "aws_subnet" "public_1" {
   vpc_id                  = aws_vpc.main.id
   cidr_block              = "10.0.1.0/24"
@@ -31,7 +30,6 @@ resource "aws_subnet" "public_2" {
   }
 }
 
-# Private Subnets
 resource "aws_subnet" "private_1" {
   vpc_id            = aws_vpc.main.id
   cidr_block        = "10.0.3.0/24"
@@ -52,7 +50,6 @@ resource "aws_subnet" "private_2" {
   }
 }
 
-# Internet Gateway
 resource "aws_internet_gateway" "main" {
   vpc_id = aws_vpc.main.id
 
@@ -61,7 +58,6 @@ resource "aws_internet_gateway" "main" {
   }
 }
 
-# Route Table (Public)
 resource "aws_route_table" "public" {
   vpc_id = aws_vpc.main.id
 
@@ -85,7 +81,6 @@ resource "aws_route_table_association" "public_2" {
   route_table_id = aws_route_table.public.id
 }
 
-# NAT Gateway (Single for cost saving)
 resource "aws_eip" "nat" {
   domain = "vpc"
 }
@@ -99,7 +94,6 @@ resource "aws_nat_gateway" "main" {
   }
 }
 
-# Route Table (Private)
 resource "aws_route_table" "private" {
   vpc_id = aws_vpc.main.id
 

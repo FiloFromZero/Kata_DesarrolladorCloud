@@ -1,4 +1,3 @@
-# ECR Repository
 resource "aws_ecr_repository" "main" {
   name                 = var.project_name
   image_tag_mutability = "MUTABLE"
@@ -8,12 +7,10 @@ resource "aws_ecr_repository" "main" {
   }
 }
 
-# ECS Cluster
 resource "aws_ecs_cluster" "main" {
   name = "${var.project_name}-cluster"
 }
 
-# Task Definition
 resource "aws_ecs_task_definition" "main" {
   family                   = "${var.project_name}-task"
   network_mode             = "awsvpc"
@@ -39,15 +36,10 @@ resource "aws_ecs_task_definition" "main" {
         { name = "DB_PORT", value = "5432" },
         { name = "DB_NAME", value = "kata_db" },
         { name = "DB_USERNAME", value = "postgres" },
-        # Temporary: Force ddl-auto=update to bypass Flyway issue
         { name = "JPA_DDL_AUTO", value = "update" },
-        # Secrets should ideally come from Secrets Manager, but for simplicity here we use env vars
-        # In a real scenario, we would use secrets = [{ name = "DB_PASSWORD", valueFrom = "arn:..." }]
         { name = "DB_PASSWORD", value = var.db_password },
         { name = "JWT_SECRET", value = var.jwt_secret },
-        # Mail From (for email simulation only - no real emails sent)
         { name = "MAIL_FROM", value = var.mail_from },
-        # CORS
         { name = "ALLOWED_ORIGINS", value = var.allowed_origins },
         { name = "ALLOWED_METHODS", value = var.allowed_methods },
         { name = "ALLOW_CREDENTIALS", value = var.allow_credentials },
@@ -65,7 +57,6 @@ resource "aws_ecs_task_definition" "main" {
   ])
 }
 
-# ECS Service
 resource "aws_ecs_service" "main" {
   name            = "${var.project_name}-service"
   cluster         = aws_ecs_cluster.main.id
@@ -88,7 +79,6 @@ resource "aws_ecs_service" "main" {
   depends_on = [aws_lb_listener.http]
 }
 
-# IAM Roles (Minimal)
 resource "aws_iam_role" "ecs_execution_role" {
   name = "${var.project_name}-execution-role"
 
@@ -128,7 +118,6 @@ resource "aws_iam_role" "ecs_task_role" {
   })
 }
 
-# IAM Policy for CloudWatch Metrics
 resource "aws_iam_role_policy" "ecs_task_cloudwatch_policy" {
   name = "${var.project_name}-task-cloudwatch-policy"
   role = aws_iam_role.ecs_task_role.id
@@ -149,7 +138,6 @@ resource "aws_iam_role_policy" "ecs_task_cloudwatch_policy" {
   })
 }
 
-# CloudWatch Log Group
 resource "aws_cloudwatch_log_group" "main" {
   name              = "/ecs/${var.project_name}"
   retention_in_days = 30

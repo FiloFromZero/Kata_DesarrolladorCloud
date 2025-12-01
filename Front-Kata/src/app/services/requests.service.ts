@@ -266,7 +266,6 @@ export class RequestsService {
     if (v === 'access' || v === 'acceso') return 'Acceso';
     if (v === 'change' || v === 'cambio') return 'Cambio';
     if (v === 'support' || v === 'soporte' || v === 'ayuda') return 'Soporte';
-    // Si no se encuentra mapeo, devolver el tipo original capitalizado
     return t.charAt(0).toUpperCase() + t.slice(1).toLowerCase();
   }
 

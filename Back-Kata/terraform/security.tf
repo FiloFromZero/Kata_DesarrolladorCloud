@@ -1,4 +1,3 @@
-# ALB Security Group
 resource "aws_security_group" "alb" {
   name        = "${var.project_name}-alb-sg"
   description = "Allow HTTP/HTTPS inbound"
@@ -24,7 +23,6 @@ resource "aws_security_group" "alb" {
   }
 }
 
-# ECS Task Security Group
 resource "aws_security_group" "ecs_tasks" {
   name        = "${var.project_name}-ecs-tasks-sg"
   description = "Allow inbound access from ALB only"
@@ -50,7 +48,6 @@ resource "aws_security_group" "ecs_tasks" {
   }
 }
 
-# RDS Security Group
 resource "aws_security_group" "rds" {
   name        = "${var.project_name}-rds-sg"
   description = "Allow inbound access from ECS only"

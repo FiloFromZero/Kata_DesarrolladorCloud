@@ -9,12 +9,11 @@ export type UserSummary = { username: string };
 export class UsersService {
   private readonly users$ = new BehaviorSubject<UserSummary[]>([]);
   
-  // Cache for search results with TTL
   private searchCache = new Map<string, {
     result: { content: UserSummary[]; page: number; totalPages: number },
     timestamp: number
   }>();
-  private readonly CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+  private readonly CACHE_TTL = 5 * 60 * 1000;
   
   constructor(private readonly http: HttpClient) {}
   
@@ -32,7 +31,6 @@ export class UsersService {
     const cacheKey = `${q}|${page}|${size}`;
     const cached = this.searchCache.get(cacheKey);
     
-    // Return cached result if valid
     if (cached && (Date.now() - cached.timestamp) < this.CACHE_TTL) {
       return of(cached.result);
     }
@@ -40,14 +38,12 @@ export class UsersService {
     return this.http.get<{ content: UserSummary[]; number: number; totalPages: number }>(`/api/users/search`, { params: { q, page, size } }).pipe(
       map(res => ({ content: res.content ?? [], page: res.number ?? page, totalPages: res.totalPages ?? 1 })),
       tap(result => {
-        // Store in cache
         this.searchCache.set(cacheKey, { result, timestamp: Date.now() });
       }),
       catchError(() => of({ content: [], page, totalPages: 1 }))
     );
   }
   
-  // Method to clear cache if needed
   clearCache(): void {
     this.searchCache.clear();
   }

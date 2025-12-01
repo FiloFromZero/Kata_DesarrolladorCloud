@@ -37,7 +37,6 @@ public class CorsConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        // Use allowedOriginPatterns instead of allowedOrigins to support "*" with allowCredentials=true
         configuration.setAllowedOriginPatterns(Arrays.asList(allowedOrigins));
 
         configuration.setAllowedMethods(Arrays.asList(allowedMethods));
