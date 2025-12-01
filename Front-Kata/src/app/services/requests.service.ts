@@ -265,7 +265,9 @@ export class RequestsService {
     if (v === 'api_gateway' || v === 'api gateway' || v === 'gateway' || v === 'api') return 'API Gateway';
     if (v === 'access' || v === 'acceso') return 'Acceso';
     if (v === 'change' || v === 'cambio') return 'Cambio';
-    return t;
+    if (v === 'support' || v === 'soporte' || v === 'ayuda') return 'Soporte';
+    // Si no se encuentra mapeo, devolver el tipo original capitalizado
+    return t.charAt(0).toUpperCase() + t.slice(1).toLowerCase();
   }
 
   create(dto: { title: string; description?: string; requesterName: string; approverName: string; type: 'deployment' | 'access' | 'change' | string }): Observable<BackendRequest> {

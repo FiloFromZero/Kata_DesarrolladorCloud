@@ -41,7 +41,6 @@ import { AuthService } from '../../services/auth.service';
             <a [routerLink]="['/request/new']" class="inline-flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium bg-white text-slate-700 ring-1 ring-gray-300 hover:bg-slate-50">Nueva Solicitud
               <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M11 11V5h2v6h6v2h-6v6h-2v-6H5v-2h6Z"/></svg>
             </a>
-            <div class="text-xs text-slate-500">Actualizado ahora</div>
           </div>
         </div>
         @defer (on viewport) {
@@ -64,7 +63,7 @@ import { AuthService } from '../../services/auth.service';
                   <div class="px-6 py-3 text-slate-800 min-w-0"><span class="break-words whitespace-normal leading-5" [title]="item.title">{{ item.title }}</span></div>
                   <div class="px-6 py-3 min-w-0"><span class="text-slate-700 break-all whitespace-normal leading-5" [title]="item.requester.name">{{ item.requester.name }}</span></div>
                   <div class="px-6 py-3 min-w-0"><span class="text-slate-700 break-all whitespace-normal leading-5" [title]="item.approverName">{{ item.approverName }}</span></div>
-                  <div class="px-6 py-3"><span class="px-2 py-1 text-xs rounded-md ring-1" [ngClass]="typeStyles[item.type]">{{ item.type }}</span></div>
+                  <div class="px-6 py-3"><span class="px-2 py-1 text-xs rounded-md ring-1" [ngClass]="getTypeStyle(item.type)">{{ item.type }}</span></div>
                   <div class="px-6 py-3 text-slate-600 hidden sm:block min-w-0 whitespace-nowrap"><span class="truncate" [title]="item.date">{{ item.date }}</span></div>
                   <div class="px-6 py-3"><span class="px-2 py-1 text-xs rounded-md ring-1" [ngClass]="stateStyles[item.status]">{{ statusLabel(item.status) }}</span></div>
                   <div class="px-6 py-3 text-right">
@@ -86,54 +85,6 @@ import { AuthService } from '../../services/auth.service';
           </div>
         }
       </div>
-
-      <div class="bg-white rounded-xl shadow-sm border border-gray-200 mt-6">
-        <div class="px-4 md:px-6 py-4 border-b border-gray-200 flex items-center justify-between">
-          <div class="text-sm font-medium text-slate-700">Mis solicitudes creadas</div>
-          <div class="text-xs text-slate-500">Solo las que yo creé</div>
-        </div>
-        @defer (on idle) {
-          {{ triggerCreated() }}
-          <div class="overflow-x-auto">
-            <div class="min-w-full">
-              <div class="grid grid-cols-[160px_1fr_1fr_120px_120px_120px_1fr] bg-slate-50 text-slate-600 text-xs">
-                <div class="px-6 py-3 text-left font-medium whitespace-nowrap">ID</div>
-                <div class="px-6 py-3 text-left font-medium whitespace-nowrap">Título</div>
-                <div class="px-6 py-3 text-left font-medium whitespace-nowrap">Aprobador</div>
-                <div class="px-6 py-3 text-left font-medium whitespace-nowrap">Tipo</div>
-                <div class="px-6 py-3 text-left font-medium whitespace-nowrap hidden sm:block">Fecha</div>
-                <div class="px-6 py-3 text-left font-medium whitespace-nowrap">Estado</div>
-                <div class="px-6 py-3 text-left font-medium whitespace-nowrap">Comentarios</div>
-              </div>
-              <cdk-virtual-scroll-viewport [itemSize]="rowHeight" class="h-[600px]" (scrolledIndexChange)="onCreatedScrolled($event)">
-                <div class="grid grid-cols-[160px_1fr_1fr_120px_120px_120px_1fr] divide-y divide-gray-100 text-sm" *cdkVirtualFor="let item of requestsCreated; trackBy: trackById">
-                  <div class="px-6 py-3 font-mono text-xs text-slate-700 min-w-0"><span class="break-all whitespace-normal leading-5">{{ item.id }}</span></div>
-                  <div class="px-6 py-3 text-slate-800 min-w-0"><span class="break-words whitespace-normal leading-5" [title]="item.title">{{ item.title }}</span></div>
-                  <div class="px-6 py-3 min-w-0"><span class="text-slate-700 break-all whitespace-normal leading-5" [title]="item.approverName">{{ item.approverName }}</span></div>
-                  <div class="px-6 py-3"><span class="px-2 py-1 text-xs rounded-md ring-1" [ngClass]="typeStyles[item.type]">{{ item.type }}</span></div>
-                  <div class="px-6 py-3 text-slate-600 hidden sm:block min-w-0 whitespace-nowrap"><span class="truncate" [title]="item.date">{{ item.date }}</span></div>
-                  <div class="px-6 py-3"><span class="px-2 py-1 text-xs rounded-md ring-1" [ngClass]="stateStyles[item.status]">{{ statusLabel(item.status) }}</span></div>
-                  <div class="px-6 py-3 min-w-0">
-                    @if (item.comments) {
-                      <span class="text-slate-600 italic text-xs line-clamp-2" [title]="item.comments">{{ item.comments }}</span>
-                    } @else {
-                      <span class="text-slate-400 text-xs">Sin comentarios</span>
-                    }
-                  </div>
-                </div>
-              </cdk-virtual-scroll-viewport>
-            </div>
-          </div>
-        } @placeholder {
-          <div class="p-6 text-sm text-slate-500">Cargando mis solicitudes…</div>
-        } @loading {
-          <div class="p-6 animate-pulse space-y-3">
-            <div class="h-4 w-1/3 bg-slate-200 rounded"></div>
-            <div class="h-4 w-2/3 bg-slate-200 rounded"></div>
-            <div class="h-4 w-1/2 bg-slate-200 rounded"></div>
-          </div>
-        }
-      </div>
     </div>
   `
 })
@@ -142,18 +93,13 @@ export class DashboardComponent {
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly auth = inject(AuthService);
   requests: UIRequest[] = [];
-  requestsCreated: UIRequest[] = [];
   pendingCount = 0;
   processedCount = 0;
   rowHeight = 72;
   private mainLoaded = false;
-  private createdLoaded = false;
   private pageMain = 0;
   private totalPagesMain = 1;
   private loadingMain = false;
-  private pageCreated = 0;
-  private totalPagesCreated = 1;
-  private loadingCreated = false;
 
   constructor() {}
 
@@ -182,19 +128,6 @@ export class DashboardComponent {
     return '';
   }
 
-  triggerCreated() {
-    if (this.createdLoaded) return '';
-    this.createdLoaded = true;
-    if (!this.auth.isBrowser()) return '';
-    const me = this.auth.getUsername();
-    this.service.getBase().subscribe(base => {
-      const list = base ?? [];
-      this.requestsCreated = me ? list.filter(i => i.requester.name === me) : [];
-      this.cdr.markForCheck();
-    });
-    this.loadMoreCreated(true);
-    return '';
-  }
 
   readonly stateStyles: Record<'pending' | 'approved' | 'rejected', string> = {
     pending: 'bg-yellow-100 text-yellow-800 ring-yellow-200',
@@ -213,8 +146,13 @@ export class DashboardComponent {
     'Base de Datos': 'bg-teal-100 text-teal-700 ring-teal-200',
     Seguridad: 'bg-rose-100 text-rose-700 ring-rose-200',
     Infraestructura: 'bg-stone-100 text-stone-700 ring-stone-200',
-    'API Gateway': 'bg-lime-100 text-lime-700 ring-lime-200'
+    'API Gateway': 'bg-lime-100 text-lime-700 ring-lime-200',
+    Soporte: 'bg-slate-100 text-slate-700 ring-slate-200'
   };
+
+  getTypeStyle(type: string): string {
+    return this.typeStyles[type] || 'bg-gray-100 text-gray-700 ring-gray-200';
+  }
 
   
   
@@ -223,10 +161,6 @@ export class DashboardComponent {
   onMainScrolled(index: number) {
     const threshold = this.requests.length - 10;
     if (index >= threshold) this.loadMoreMain();
-  }
-  onCreatedScrolled(index: number) {
-    const threshold = this.requestsCreated.length - 10;
-    if (index >= threshold) this.loadMoreCreated();
   }
   private loadMoreMain(initial = false) {
     if (this.loadingMain) return;
@@ -239,18 +173,6 @@ export class DashboardComponent {
       this.loadingMain = false;
       this.cdr.markForCheck();
     }, () => { this.loadingMain = false; });
-  }
-  private loadMoreCreated(initial = false) {
-    if (this.loadingCreated) return;
-    if (!initial && this.pageCreated >= this.totalPagesCreated) return;
-    this.loadingCreated = true;
-    this.service.getCreatedByMePaged(initial ? 0 : this.pageCreated, 50).subscribe(res => {
-      this.requestsCreated = initial ? res.content : [...this.requestsCreated, ...res.content];
-      this.pageCreated = (initial ? 0 : this.pageCreated) + 1;
-      this.totalPagesCreated = res.totalPages;
-      this.loadingCreated = false;
-      this.cdr.markForCheck();
-    }, () => { this.loadingCreated = false; });
   }
   
 }

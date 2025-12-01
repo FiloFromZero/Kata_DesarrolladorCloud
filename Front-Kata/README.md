@@ -1,59 +1,39 @@
-# FrontKata
+# Instrucciones para ejecutar el Frontend con el Backend desplegado
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.0.1.
+## Desarrollo Local (con Backend en localhost:8080)
 
-## Development server
+1. **Asegúrate de que el Backend esté corriendo**:
+   ```bash
+   cd Back-Kata
+   ./gradlew bootRun
+   ```
 
-To start a local development server, run:
+2. **Inicia el Frontend**:
+   ```bash
+   cd Front-Kata
+   # En Windows:
+   start-dev.bat
+   # En Linux/Mac:
+   ./start-dev.sh
+   ```
 
-```bash
-ng serve
-```
+3. **Abre el navegador**:
+   - Frontend: http://localhost:4200
+   - Backend: http://localhost:8080
+   - Swagger: http://localhost:8080/swagger-ui.html
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+## Producción (con Backend desplegado en AWS)
 
-## Code scaffolding
+El Frontend está configurado para usar el backend desplegado en:
+`http://back-kata-alb-2058729206.us-east-1.elb.amazonaws.com`
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+Para cambiar la URL del backend, modifica el archivo:
+- `src/environments/environment.prod.ts` para producción
+- `src/environments/environment.ts` para desarrollo
 
-```bash
-ng generate component component-name
-```
+## Scripts disponibles
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+- `npm run start` - Inicia el servidor de desarrollo
+- `npm run build` - Construye para producción
+- `npm run build-prod.bat` - Script de construcción para Windows
+- `npm run build-prod.sh` - Script de construcción para Linux/Mac

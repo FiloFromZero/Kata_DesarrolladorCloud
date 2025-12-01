@@ -21,6 +21,17 @@ export const routes: Routes = [
     ]
   },
   {
+    path: 'history',
+    loadComponent: () => import('./components/layout/dashboard-layout.component').then(m => m.DashboardLayoutComponent),
+    canActivate: [authGuard],
+    children: [
+      {
+        path: '',
+        loadComponent: () => import('./components/history/history.component').then(m => m.HistoryComponent)
+      }
+    ]
+  },
+  {
     path: 'request',
     loadComponent: () => import('./components/layout/dashboard-layout.component').then(m => m.DashboardLayoutComponent),
     canActivate: [authGuard],
