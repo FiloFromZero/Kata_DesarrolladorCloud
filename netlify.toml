@@ -13,12 +13,19 @@
 
 # Configuración de redirecciones para SPA (Single Page Application)
 # Esto asegura que todas las rutas de Angular funcionen correctamente
-# IMPORTANTE: Esta regla debe estar al final para que funcione correctamente
+# IMPORTANTE: La regla catch-all debe estar al final y debe excluir archivos estáticos
+
+# Redirigir la raíz explícitamente
+[[redirects]]
+  from = "/"
+  to = "/index.html"
+  status = 200
+
+# Redirigir todas las demás rutas (excepto archivos estáticos) a index.html
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
-  force = false
 
 # Headers de seguridad
 [[headers]]
