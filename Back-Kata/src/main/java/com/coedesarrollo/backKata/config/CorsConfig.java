@@ -37,32 +37,26 @@ public class CorsConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        
-        configuration.setAllowedOrigins(Arrays.asList(allowedOrigins));
+        // Use allowedOriginPatterns instead of allowedOrigins to support "*" with allowCredentials=true
+        configuration.setAllowedOriginPatterns(Arrays.asList(allowedOrigins));
 
-        
         configuration.setAllowedMethods(Arrays.asList(allowedMethods));
 
-        
         if ("*".equals(allowedHeaders)) {
             configuration.addAllowedHeader("*");
         } else {
             configuration.setAllowedHeaders(Arrays.asList(allowedHeaders.split(",")));
         }
 
-        
         if (exposedHeaders.length > 0 && !exposedHeaders[0].isEmpty()) {
             configuration.setExposedHeaders(Arrays.asList(exposedHeaders));
         }
 
-        
         configuration.setAllowCredentials(allowCredentials);
 
-        
         configuration.setMaxAge(maxAge);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        
         source.registerCorsConfiguration("/api/**", configuration);
 
         return source;
