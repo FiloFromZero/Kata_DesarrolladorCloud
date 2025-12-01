@@ -39,6 +39,8 @@ resource "aws_ecs_task_definition" "main" {
         { name = "DB_PORT", value = "5432" },
         { name = "DB_NAME", value = "kata_db" },
         { name = "DB_USERNAME", value = "postgres" },
+        # Temporary: Force ddl-auto=update to bypass Flyway issue
+        { name = "JPA_DDL_AUTO", value = "update" },
         # Secrets should ideally come from Secrets Manager, but for simplicity here we use env vars
         # In a real scenario, we would use secrets = [{ name = "DB_PASSWORD", valueFrom = "arn:..." }]
         { name = "DB_PASSWORD", value = var.db_password },
