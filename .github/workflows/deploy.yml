@@ -43,7 +43,9 @@ jobs:
           -var="aws_region=${{ env.AWS_REGION }}" \
           -var="project_name=${{ env.PROJECT_NAME }}" \
           -var="db_password=${{ secrets.DB_PASSWORD }}" \
-          -var="jwt_secret=${{ secrets.JWT_SECRET }}"
+          -var="jwt_secret=${{ secrets.JWT_SECRET }}" \
+          -var="smtp_user=${{ secrets.SMTP_USER }}" \
+          -var="smtp_password=${{ secrets.SMTP_PASSWORD }}"
 
   build-and-push:
     name: 2. Build & Push Docker Image
@@ -113,4 +115,6 @@ jobs:
           -var="aws_region=${{ env.AWS_REGION }}" \
           -var="project_name=${{ env.PROJECT_NAME }}" \
           -var="db_password=${{ secrets.DB_PASSWORD }}" \
-          -var="jwt_secret=${{ secrets.JWT_SECRET }}"
+          -var="jwt_secret=${{ secrets.JWT_SECRET }}" \
+          -var="smtp_user=${{ secrets.SMTP_USER }}" \
+          -var="smtp_password=${{ secrets.SMTP_PASSWORD }}"

@@ -27,3 +27,15 @@ variable "jwt_secret" {
   type        = string
   sensitive   = true
 }
+
+variable "smtp_user" {
+  description = "SMTP Username"
+  type        = string
+  sensitive   = true
+}
+
+variable "smtp_password" {
+  description = "SMTP Password"
+  type        = string
+  sensitive   = true
+}

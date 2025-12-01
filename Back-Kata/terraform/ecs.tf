@@ -44,7 +44,9 @@ resource "aws_ecs_task_definition" "main" {
         # Secrets should ideally come from Secrets Manager, but for simplicity here we use env vars
         # In a real scenario, we would use secrets = [{ name = "DB_PASSWORD", valueFrom = "arn:..." }]
         { name = "DB_PASSWORD", value = var.db_password },
-        { name = "JWT_SECRET", value = var.jwt_secret }
+        { name = "JWT_SECRET", value = var.jwt_secret },
+        { name = "SMTP_USER", value = var.smtp_user },
+        { name = "SMTP_PASSWORD", value = var.smtp_password }
       ]
       logConfiguration = {
         logDriver = "awslogs"
