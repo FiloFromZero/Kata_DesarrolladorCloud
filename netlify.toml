@@ -1,0 +1,45 @@
+[build]
+  # Comando para construir la aplicación
+  # Si Base directory es "." (raíz), este comando debe entrar a Front-Kata primero
+  command = "cd Front-Kata && npm install && npm run build -- --configuration=production"
+  
+  # Directorio donde Netlify encontrará los archivos construidos
+  # Si Base directory es "." (raíz), este path es desde la raíz del repositorio
+  publish = "Front-Kata/dist/Front-Kata/browser"
+
+[build.environment]
+  # Versión de Node.js
+  NODE_VERSION = "20"
+
+# Configuración de redirecciones para SPA (Single Page Application)
+# Esto asegura que todas las rutas de Angular funcionen correctamente
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# Headers de seguridad
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+# Headers para archivos estáticos (cache)
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.js"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.css"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
