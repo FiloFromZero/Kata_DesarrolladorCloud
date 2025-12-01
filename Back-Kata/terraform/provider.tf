@@ -9,7 +9,7 @@ terraform {
   backend "s3" {
     bucket = "back-kata-terraform-state"
     key    = "prod/terraform.tfstate"
-    region = "us-east-1"
+    region = "us-east-2"
   }
 }
 
