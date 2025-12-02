@@ -5,7 +5,6 @@ Sistema de gestión de aprobaciones desarrollado como kata técnica, implementan
 ## 📋 Tabla de Contenidos
 
 - [Descripción](#-descripción)
-- [Arquitectura](#-arquitectura)
 - [Tecnologías](#-tecnologías)
 - [Estructura del Proyecto](#-estructura-del-proyecto)
 - [Prerrequisitos](#-prerrequisitos)
@@ -480,5 +479,5 @@ Este proyecto es parte de una kata técnica de desarrollo.
 
 ---
 
-**Desarrollado como parte de la Kata COEDesarrollo** 🚀
+**Desarrollado como parte de la Kata COEDesarrollo por Daniel Mateo Montoya González ;D** 🚀
 

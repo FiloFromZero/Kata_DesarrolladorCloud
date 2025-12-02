@@ -28,12 +28,14 @@ variable "jwt_secret" {
   sensitive   = true
 }
 
+# Mail sender (From) address for email simulation (no real emails sent)
 variable "mail_from" {
   description = "Mail From address used for email simulation"
   type        = string
   default     = "no-reply@kata.local"
 }
 
+# CORS configuration for production
 variable "allowed_origins" {
   description = "Comma-separated list of allowed origins for CORS"
   type        = string
