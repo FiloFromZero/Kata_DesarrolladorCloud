@@ -15,6 +15,22 @@ Sistema de gestión de aprobaciones desarrollado como kata técnica, implementan
 - [Testing](#-testing)
 - [Estructura de Base de Datos](#-estructura-de-base-de-datos)
 
+
+---
+
+## 👤 Usuarios de Prueba
+
+Se pueden crear nuevos usuarios si se requiere. Los siguientes usuarios están disponibles para pruebas:
+
+| Usuario | Contraseña |
+|---------|------------|
+| `montoyamateo138@gmail.com` | `Apartamento403++` |
+| `pruebas@hotmail.com` | `Apartamento403++` |
+| `gustavoamontoya@hotmail.com` | `Apartamento403++` |
+| `smontoya0413@gmail.com` | `Apartamento403++` |
+
+**Nota:** Estos usuarios son solo para pruebas. Se recomienda crear nuevos usuarios mediante el endpoint de registro.
+
 ---
 
 ## 📖 Descripción
